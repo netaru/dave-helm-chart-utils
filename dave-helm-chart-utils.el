@@ -110,16 +110,10 @@ Does nothing if `dave-helm-chart-directory' is not set.
 (require 'hydra)
 
 (defhydra dave-helm-hydra ()
-  "
-Run helm commands
-_v_ : Choose a values file to use when generating templates
-_c_ : Choose a chart folder to generate templates from
-_g_ : Generate the templates
-_q_ : Quit
-"
-  ("v" dave-helm-choose-override-file (or dave-helm-values-override-file ""))
-  ("c" dave-helm-choose-helm-directory (or dave-helm-chart-directory ""))
-  ("g" dave-helm-generate-templates "Generate templates" :exit t)
+  "Run helm commands"
+  ("v" dave-helm-choose-override-file (concat (or dave-helm-values-override-file "") "\n"))
+  ("c" dave-helm-choose-helm-directory (concat (or dave-helm-chart-directory "") "\n"))
+  ("g" dave-helm-generate-templates "Generate templates\n" :exit t)
   ("q" nil "finished" :exit t))
 
 (provide 'dave-helm-chart-utils)
