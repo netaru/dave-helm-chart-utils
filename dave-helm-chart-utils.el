@@ -71,7 +71,7 @@
   (interactive)
   (let* ((targets (flatten-list
                    (seq-map
-                    (lambda (folder) (split-string (shell-command-to-string (format "find %s -regex '.*/values.ya?ml'" folder))))
+                    (lambda (folder) (split-string (shell-command-to-string (format "find %s -name 'values.yaml' -or -name 'values.yml'" folder))))
                     dave-helm-values-directories)))
          (chosen (completing-read "Which values file: " targets nil t)))
     (setopt dave-helm-values-override-file chosen)))
