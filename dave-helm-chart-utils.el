@@ -110,7 +110,7 @@ Does nothing if `dave-helm-chart-directory' is not set.
   ("e" (lambda () (interactive) (find-file dave-helm-values-override-file)) "Edit values file\n" :exit t)
   ("d" (lambda () (interactive) (find-file dave-helm-chart-directory)) "Edit chart\n" :exit t)
   ("v" dave-helm-choose-override-file (concat (or dave-helm-values-override-file "") "\n"))
-  ("c" dave-helm-choose-helm-directory (concat (or  "") "\n"))
+  ("c" dave-helm-choose-helm-directory (concat (or dave-helm-chart-directory "") "\n"))
   ("g" dave-helm-generate-templates "Generate templates" :exit t))
 
 (provide 'dave-helm-chart-utils)
