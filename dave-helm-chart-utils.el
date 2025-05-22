@@ -3,7 +3,7 @@
 ;; Author:    David Jonsson <david.jonsson306@gmail.com>
 ;; URL:       N/A
 ;; Version:   0.0.1
-;; Package-Requires: ((emacs "26.1") (hydra "0.13.2"))
+;; Package-Requires: ((emacs "26.1") (hydra "0.13.2") (f "0.6.0"))
 
 ;;; License:
 
