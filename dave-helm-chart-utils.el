@@ -107,6 +107,8 @@ Does nothing if `dave-helm-chart-directory' is not set.
         (yaml-mode))
       (delete-directory target t))))
 
+(require 'hydra)
+
 (defhydra dave-helm-hydra ()
   "
 Run helm commands
