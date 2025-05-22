@@ -84,37 +84,34 @@ Does nothing if `dave-helm-chart-directory' is not set.
 "
   (interactive)
   (when (and dave-helm-chart-directory (file-exists-p dave-helm-chart-directory))
-    (let* ((source dave-helm-chart-directory)
-           (project (file-name-base source))
-           (target (make-temp-file "emacs-helm-generate" t))
-           (default-directory target)
-           (project-dir (concat target "/" project))
+    (let* ((project-dir (format "%s%s" temporary-file-directory (make-temp-name "emacs-helm-generate")))
            (values-file (concat project-dir "/values.yaml"))
-           (values-file-override dave-helm-values-override-file)
-           (values-file-new-location (concat project-dir "/values-old.yaml"))
+           (values-file-old (concat project-dir "/values-old.yaml"))
            (buffer-name (generate-new-buffer-name "*helm-generated-templates*")))
-      (copy-directory source project-dir)
-      (when (and values-file-override (file-exists-p values-file-override))
-        (rename-file values-file values-file-new-location)
+      (copy-directory dave-helm-chart-directory project-dir)
+      (when (and dave-helm-values-override-file (file-exists-p dave-helm-values-override-file))
+        (rename-file values-file values-file-old)
         (f-write-text
          (shell-command-to-string
-          (dave-helm-yq-build-command values-file-new-location values-file-override))
+          (dave-helm-yq-build-command values-file-old dave-helm-values-override-file))
          'utf-8
          values-file))
       (with-output-to-temp-buffer buffer-name
         (call-process "helm" nil buffer-name nil "template" "generated" project-dir)
         (pop-to-buffer buffer-name)
         (yaml-mode))
-      (delete-directory target t))))
+      (delete-directory project-dir t))))
 
 (require 'hydra)
 
 (defhydra dave-helm-hydra ()
   "Run helm commands"
+  ("q" nil "finished\n" :exit t)
+  ("e" (lambda () (interactive) (find-file dave-helm-values-override-file)) "Edit values file\n" :exit t)
+  ("d" (lambda () (interactive) (find-file dave-helm-chart-directory)) "Edit chart\n" :exit t)
   ("v" dave-helm-choose-override-file (concat (or dave-helm-values-override-file "") "\n"))
-  ("c" dave-helm-choose-helm-directory (concat (or dave-helm-chart-directory "") "\n"))
-  ("g" dave-helm-generate-templates "Generate templates\n" :exit t)
-  ("q" nil "finished" :exit t))
+  ("c" dave-helm-choose-helm-directory (concat (or  "") "\n"))
+  ("g" dave-helm-generate-templates "Generate templates" :exit t))
 
 (provide 'dave-helm-chart-utils)
 ;;; dave-helm-chart-utils.el ends here
