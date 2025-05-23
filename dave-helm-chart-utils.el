@@ -119,8 +119,8 @@ Does nothing if `dave-helm-chart-directory' is not set.
 (transient-define-prefix dave-helm-chart ()
   "Generate helm templates."
   ["Options"
-   ("v" (lambda () (format "Values: %s" (or dave-helm-values-override-file "")))  dave-helm-choose-override-file :transient t)
-   ("c" (lambda () (format "Chart : %s" (or dave-helm-chart-directory ""))) dave-helm-choose-helm-directory :transient t)]
+   ("v" (lambda () (format "Values : %s" (or dave-helm-values-override-file "")))  dave-helm-choose-override-file :transient t)
+   ("c" (lambda () (format "Chart  : %s" (or dave-helm-chart-directory ""))) dave-helm-choose-helm-directory :transient t)]
   ["Actions"
    ("e" "edit values" dave-helm-open-values-file)
    ("d" "edit chart" dave-helm-open-chart)
