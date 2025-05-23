@@ -3,7 +3,7 @@
 ;; Author:    David Jonsson <david.jonsson306@gmail.com>
 ;; URL:       N/A
 ;; Version:   0.0.1
-;; Package-Requires: ((emacs "26.1") (hydra "0.13.2") (f "0.6.0"))
+;; Package-Requires: ((emacs "26.1") (transient "0.4.3") (f "0.6.0"))
 
 ;;; License:
 
@@ -57,6 +57,18 @@
   (format "yq -n '%s'" (string-join (seq-map (lambda (file) (format "load(\"%s\")" file)) (append (list initial) rs)) " * ")))
 
 ;;;###autoload
+(defun dave-helm-open-values-file ()
+  "Open the `dave-helm-values-override-file' if not nil."
+  (interactive)
+  (when dave-helm-values-override-file (find-file dave-helm-values-override-file)))
+
+;;;###autoload
+(defun dave-helm-open-chart ()
+  "Open the `dave-helm-chart-directory' if not nil."
+  (interactive)
+  (when dave-helm-chart-directory (find-file dave-helm-chart-directory)))
+
+;;;###autoload
 (defun dave-helm-choose-helm-directory ()
   (interactive)
   (let* ((targets (flatten-list
@@ -102,16 +114,17 @@ Does nothing if `dave-helm-chart-directory' is not set.
         (yaml-mode))
       (delete-directory project-dir t))))
 
-(require 'hydra)
+(require 'transient)
 
-(defhydra dave-helm-hydra ()
-  "Run helm commands"
-  ("q" nil "finished\n" :exit t)
-  ("e" (lambda () (interactive) (find-file dave-helm-values-override-file)) "Edit values file\n" :exit t)
-  ("d" (lambda () (interactive) (find-file dave-helm-chart-directory)) "Edit chart\n" :exit t)
-  ("v" dave-helm-choose-override-file (concat (or dave-helm-values-override-file "") "\n"))
-  ("c" dave-helm-choose-helm-directory (concat (or dave-helm-chart-directory "") "\n"))
-  ("g" dave-helm-generate-templates "Generate templates" :exit t))
+(transient-define-prefix dave-helm-chart ()
+  "Generate helm templates."
+  ["Options"
+   ("v" (lambda () (format "Values: %s" (or dave-helm-values-override-file "")))  dave-helm-choose-override-file :transient t)
+   ("c" (lambda () (format "Chart : %s" (or dave-helm-chart-directory ""))) dave-helm-choose-helm-directory :transient t)]
+  ["Actions"
+   ("e" "edit values" dave-helm-open-values-file)
+   ("d" "edit chart" dave-helm-open-chart)
+   ("g" "generate" dave-helm-generate-templates)])
 
 (provide 'dave-helm-chart-utils)
 ;;; dave-helm-chart-utils.el ends here
